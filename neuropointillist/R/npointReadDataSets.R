@@ -15,11 +15,22 @@ npointReadDataSets <- function(args, numberdatasets, mask.vertices) {
     designmat <- c()
     dataset<-1
     dims <- c()
+    nii <- c()
 
     # preallocate data using the total number of files and the size of the first file
 
     firstfile <- args$set1[1]
-    nii <- nifti.image.read(firstfile)
+    
+    if(args$format=="nifti") {
+        nii <- nifti.image.read(firstfile)
+    } else if(args$format=="cifti") {
+        nii <- cifti_data(firstfile)
+    } else if(args$format=="csv") {
+        nii <- read.csv(firstfile)
+    } else {
+        stop(paste("File format ", args$format, " not supported. Must be nifti, cifti or csv.")   
+    }
+    
     dims <- dim(nii)
     is3d <- length(dims)==3
     is4d <- length(dims)==4
@@ -52,7 +63,13 @@ npointReadDataSets <- function(args, numberdatasets, mask.vertices) {
         }
         
         for(file in set.files) {
-            nii <- nifti.image.read(file)
+            if(args$format=="nifti") {
+                nii <- nifti.image.read(file)
+            } else if(args$format=="cifti") {
+                nii <- cifti_data(file)
+            } else if(args$format=="csv") {
+                nii <- read.csv(file)
+            }
             stopifnot(dims == dim(nii)) #check that dimensions are the same
             if (is3d) {
                 ndat <- nii[,,]

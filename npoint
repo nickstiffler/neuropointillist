@@ -5,9 +5,11 @@
 if (!suppressWarnings(suppressPackageStartupMessages(require(Rniftilib)))) install.packages("Rniftilib", repos="http://R-Forge.R-project.org")
 if (!suppressWarnings(suppressPackageStartupMessages(require(argparse)))) install.packages("argparse")
 if (!suppressWarnings(suppressPackageStartupMessages(require(doParallel)))) install.packages("doParallel")
+if (!suppressWarnings(suppressPackageStartupMessages(require(doParallel)))) install.packages("cifti")
 suppressWarnings(suppressPackageStartupMessages(library(Rniftilib)))
 suppressWarnings(suppressPackageStartupMessages(library(argparse)))
 suppressWarnings(suppressPackageStartupMessages(library(doParallel)))
+suppressWarnings(suppressPackageStartupMessages(library(cifti)))
 suppressWarnings(suppressPackageStartupMessages(library(neuropointillist)))
 
 #### Take in command line arguments 
@@ -15,6 +17,7 @@ suppressWarnings(suppressPackageStartupMessages(library(neuropointillist)))
 parser <- ArgumentParser(description="This program prepares your MRI data for group-level mixed effects modeling")
 
 parser$add_argument("-m", "--mask", nargs=1, type="character", help="Mask limiting the voxels that will be analyzed", required=TRUE)
+parser$add_argument("-f", "--format", nargs=1, help="File format containing matrix data (nifti default, cifti, csv)", default="nifti")
 parser$add_argument("--set1", nargs=1,  help="List of files at first occasion", required=TRUE)
 parser$add_argument("--set2", nargs=1, help="List of files at second occasion")
 parser$add_argument("--set3", nargs=1, help="List of files at third occasion")
