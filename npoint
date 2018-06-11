@@ -5,7 +5,12 @@
 if (!suppressWarnings(suppressPackageStartupMessages(require(Rniftilib)))) install.packages("Rniftilib", repos="http://R-Forge.R-project.org")
 if (!suppressWarnings(suppressPackageStartupMessages(require(argparse)))) install.packages("argparse")
 if (!suppressWarnings(suppressPackageStartupMessages(require(doParallel)))) install.packages("doParallel")
-if (!suppressWarnings(suppressPackageStartupMessages(require(doParallel)))) install.packages("cifti")
+if (!suppressWarnings(suppressPackageStartupMessages(require(cifti)))) {
+ #   install.packages("cifti")
+    # Need development version for cifti_write
+    if (!suppressWarnings(suppressPackageStartupMessages(require(devtools)))) install.packages("devtools")
+    devtools::install_github("muschelli2/cifti")
+}
 suppressWarnings(suppressPackageStartupMessages(library(Rniftilib)))
 suppressWarnings(suppressPackageStartupMessages(library(argparse)))
 suppressWarnings(suppressPackageStartupMessages(library(doParallel)))
