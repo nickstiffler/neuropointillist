@@ -58,7 +58,15 @@ if (file.exists("readargs.R")) {
 #### Check for mask and read it. It is mandatory and must exist.
 maskfile <- args$mask
 tryCatch({
-    mask <- nifti.image.read(maskfile);
+    if(args$format=="nifti") {
+        mask <- nifti.image.read(maskfile)
+    } else if(args$format=="cifti") {
+        mask <- cifti_data(firstfile)
+    } else if(args$format=="csv") {
+        mask <- read.csv(firstfile)
+    } else {
+        stop(paste("File format ", args$format, " not supported. Must be nifti, cifti or csv.")   
+    }
 }, error=function(e) {
     cat("Could not read mask file: ", maskfile, "\n")
     stop(e)
@@ -192,7 +200,7 @@ if (runningParallel) {
         } else {
           cat("no. of vertices", nvertices, "\n")
           #sgeN * size is now larger than the # of vertices
-  	  size <- ceiling(nvertices/args$sgeN)
+      	  size <- ceiling(nvertices/args$sgeN)
           cat("size", trunc(nvertices/args$sgeN), "\n")
           njobs <- npointSplitDataSize(size,voxeldat,args$output,mask)
           cat("no. of jobs", njobs ,"\n")
