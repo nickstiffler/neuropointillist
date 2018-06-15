@@ -88,6 +88,18 @@ npointWarnIfNiiFileExists <- function(filename) {
     }
 }
 
+#' Warn if CSV File Exists
+#'
+#' Warn if a csv file exists, and rename it if it does
+#' @param filename CSV filename
+npointWarnIfCSVFileExists <- function(filename) {
+    if (file.exists(filename)) {
+        newfilename <- gsub(".csv", "-.csv", filename)
+        warning(paste("The output file", filename, "exists. Renaming to", newfilename))
+        file.rename(filename,newfilename)
+    }
+}
+
 
 
 #' Write out a NifTI file of voxel data
@@ -98,9 +110,14 @@ npointWarnIfNiiFileExists <- function(filename) {
 #' @param mask NifTI mask corresponding to voxel data
 #' @param voxeldata Vector of voxel data
 #' @param outputfilename 
-npointWriteFile <- function(mask, voxeldata,outputfilename) {
-# check if file exists and rename
-    npointWarnIfNiiFileExists(outputfilename)
+#' @param format nifti, cifti, or csv
+npointWriteFile <- function(mask, voxeldata,outputfilename, format) {
+    # check if file exists and rename
+    if(format == "csv") {
+        npointWarnIfCSVFileExists(outputfilename)
+    } else {
+        npointWarnIfNiiFileExists(outputfilename)
+    }
     mask.dims <- dim(mask)
     len <- mask.dims[1]*mask.dims[2]*mask.dims[3]
     mask.vector <- as.vector(mask[,,])

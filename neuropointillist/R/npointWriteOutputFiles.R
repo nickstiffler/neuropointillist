@@ -6,6 +6,7 @@
 #' a design matrix.
 #' @param prefix Prefix for output, to be prepended to outputs
 #' @param results Data returned from the processVoxel function
+#' @param format nifti, cifti or csv
 #' @param mask A nifti mask that corresponds to the output results
 #' @export
 npointWriteOutputFiles <- function(prefix, format, results, mask) {
@@ -22,6 +23,6 @@ npointWriteOutputFiles <- function(prefix, format, results, mask) {
             extension <- "csv"
         }
         outputfilename <- paste(prefix, statistic, extension, sep="")
-        npointWriteFile(mask, unlist(results[i,]),outputfilename)
+        npointWriteFile(mask, unlist(results[i,]),outputfilename, format)
     }
 }
