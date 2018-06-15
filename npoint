@@ -191,7 +191,7 @@ if (runningParallel) {
         cat("Use top to make sure that no threads are using more than 100% of the CPU.\n")
         system.time(results <-parSapply(cl,1:nvertices, processVoxel))
         stopCluster(cl)
-        npointWriteOutputFiles(args$output,results,mask)
+        npointWriteOutputFiles(args$output,args$format,results,mask)
         npointWriteCallingInfo(origargs)
     } else { # we are using SGE
         # split up the data into chunks and write out scripts to process
@@ -232,7 +232,7 @@ if (runningParallel) {
     cat("You might want to check whether your model is multithreaded\n")
     cat("because your code might run faster if you limit the number of threads\n")
     system.time(results <-sapply(1:nvertices, processVoxel))
-    npointWriteOutputFiles(args$output,results,mask)
+    npointWriteOutputFiles(args$output,args$format,results,mask)
     npointWriteCallingInfo(origargs)
 }
 

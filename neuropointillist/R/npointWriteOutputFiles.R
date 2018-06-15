@@ -8,7 +8,7 @@
 #' @param results Data returned from the processVoxel function
 #' @param mask A nifti mask that corresponds to the output results
 #' @export
-npointWriteOutputFiles <- function(prefix, results, mask) {
+npointWriteOutputFiles <- function(prefix, format, results, mask) {
    # make sure that any directory specified by prefix exists
     dir <- dirname(prefix)
     if (!dir.exists(dir)) {
@@ -17,7 +17,11 @@ npointWriteOutputFiles <- function(prefix, results, mask) {
     names <- attributes(results[,1])$names
     for(i in 1:dim(results)[1]) {
         statistic <- names[i]
-        outputfilename <- paste(prefix, statistic, ".nii.gz", sep="")
+        extension <- ".nii.gz"
+        if(format == "csv") {
+            extension <- "csv"
+        }
+        outputfilename <- paste(prefix, statistic, extension, sep="")
         npointWriteFile(mask, unlist(results[i,]),outputfilename)
     }
 }
