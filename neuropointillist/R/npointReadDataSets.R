@@ -16,6 +16,7 @@ npointReadDataSets <- function(args, numberdatasets, mask.vertices) {
     dataset<-1
     dims <- c()
     nii <- c()
+    hdr <- NULL
 
     # preallocate data using the total number of files and the size of the first file
 
@@ -24,6 +25,7 @@ npointReadDataSets <- function(args, numberdatasets, mask.vertices) {
     if(args$format=="nifti") {
         nii <- nifti.image.read(firstfile)
     } else if(args$format=="cifti") {
+        hdr <- nifti_2_hdr(firstfile)
         nii <- cifti_data(firstfile)
     } else if(args$format=="csv") {
         nii <- read.csv(firstfile)
@@ -105,5 +107,5 @@ npointReadDataSets <- function(args, numberdatasets, mask.vertices) {
         }
         dataset <- dataset+1
     }
-    return(list(designmat=designmat,voxeldat=voxeldat))
+    return(list(designmat=designmat,voxeldat=voxeldat, hdr=hdr))
 }

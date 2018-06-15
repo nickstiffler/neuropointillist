@@ -132,6 +132,7 @@ cat("Reading", numberdatasets, "data sets.\n")
 data <- npointReadDataSets(args,numberdatasets,mask.vertices);
 voxeldat <- data$voxeldat
 designmat <-data$designmat
+hdr <- data$hdr
 rm(data)
 gc()
 
@@ -191,7 +192,7 @@ if (runningParallel) {
         cat("Use top to make sure that no threads are using more than 100% of the CPU.\n")
         system.time(results <-parSapply(cl,1:nvertices, processVoxel))
         stopCluster(cl)
-        npointWriteOutputFiles(args$output,args$format,results,mask)
+        npointWriteOutputFiles(args$output,args$format,results,mask,hdr)
         npointWriteCallingInfo(origargs)
     } else { # we are using SGE
         # split up the data into chunks and write out scripts to process
@@ -232,7 +233,7 @@ if (runningParallel) {
     cat("You might want to check whether your model is multithreaded\n")
     cat("because your code might run faster if you limit the number of threads\n")
     system.time(results <-sapply(1:nvertices, processVoxel))
-    npointWriteOutputFiles(args$output,args$format,results,mask)
+    npointWriteOutputFiles(args$output,args$format,results,mask,hdr)
     npointWriteCallingInfo(origargs)
 }
 

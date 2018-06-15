@@ -111,7 +111,8 @@ npointWarnIfCSVFileExists <- function(filename) {
 #' @param voxeldata Vector of voxel data
 #' @param outputfilename 
 #' @param format nifti, cifti, or csv
-npointWriteFile <- function(mask, voxeldata,outputfilename, format) {
+#' @param hdr nifti 2 header for cifti file
+npointWriteFile <- function(mask, voxeldata,outputfilename, format, hdr = NULL) {
     # check if file exists and rename
     if(format == "csv") {
         npointWarnIfCSVFileExists(outputfilename)
@@ -131,13 +132,21 @@ npointWriteFile <- function(mask, voxeldata,outputfilename, format) {
     if (is3d) {
         y <- vector(mode="numeric", length=len)
         y[mask.vertices] <- voxeldata
-        nim <- nifti.image.copy.info(mask)
-        nifti.image.setdatatype(nim, "NIFTI_TYPE_FLOAT32")
-        nim$dim <- mask.dims
-        nifti.image.alloc.data(nim)
-        nim[,,] <- as.array(y,mask.dims)
-        nifti.set.filenames(nim, outputfilename)
-        nifti.image.write(nim)
+        if(format == "nifti") {
+            nim <- nifti.image.copy.info(mask)
+            nifti.image.setdatatype(nim, "NIFTI_TYPE_FLOAT32")
+            nim$dim <- mask.dims
+            nifti.image.alloc.data(nim)
+            nim[,,] <- as.array(y,mask.dims)
+            nifti.set.filenames(nim, outputfilename)
+            nifti.image.write(nim)
+        } else if(format == "cifti") {
+            nim[,,] <- as.array(y, dims)
+            cifti.write_cifti(list(hdr = hdr, data = nim), outputfilename)
+        } else if(format == "csv") {
+            nim[,,] <- as.array(y, dims)
+            write.table(nim, outputfilename) 
+        }
     } else {# a 4d image
         # check for even multiple of volumes
         nvolumes <- length(voxeldata)/length(mask.vertices)
@@ -150,14 +159,22 @@ npointWriteFile <- function(mask, voxeldata,outputfilename, format) {
         y[mask.vertices] <- 1
         y <- rep(y, nvolumes)
         y[y==1] <- voxeldata
-        nim <- nifti.image.copy.info(mask)
-        nifti.image.setdatatype(nim, "NIFTI_TYPE_FLOAT32")
         dims <- c(mask.dims, nvolumes)
-        nim$dim <- dims
-        nifti.image.alloc.data(nim)
-        nim[,,,] <- as.array(y,dims)
-        nifti.set.filenames(nim, outputfilename)
-        nifti.image.write(nim)
+        if(format == "nifti") {
+            nim <- nifti.image.copy.info(mask)
+            nifti.image.setdatatype(nim, "NIFTI_TYPE_FLOAT32")
+            nim$dim <- dims
+            nifti.image.alloc.data(nim)
+            nim[,,,] <- as.array(y,dims)
+            nifti.set.filenames(nim, outputfilename)
+            nifti.image.write(nim)
+        } else if(format == "cifti") {
+            nim[,,,] <- as.array(y, dims)
+            cifti.write_cifti(list(hdr = hdr, data = nim), outputfilename)
+        } else if(format == "csv") {
+            nim[,,,] <- as.array(y, dims)
+            write.table(nim, outputfilename) 
+        }
     }
         
 }
